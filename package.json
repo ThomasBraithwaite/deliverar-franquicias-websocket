@@ -1,0 +1,30 @@
+{
+  "name": "deliverar-franquicias-websocket",
+  "version": "1.0.0",
+  "description": "",
+  "main": "template.js",
+  "scripts": {
+    "start": "node app.js",
+    "start-local": "set IS_LOCAL=true&& node app.js",
+    "start-local-mac": "IS_LOCAL=true node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThomasBraithwaite/deliverar-franquicias-websocket.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ThomasBraithwaite/deliverar-franquicias-websocket/issues"
+  },
+  "homepage": "https://github.com/ThomasBraithwaite/deliverar-franquicias-websocket#readme",
+  "dependencies": {
+    "aws-sdk": "^2.1248.0",
+    "bluebird": "^3.7.2",
+    "mongoose": "^6.7.1",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3",
+    "websocket": "^1.0.34"
+  }
+}
