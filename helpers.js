@@ -18,9 +18,7 @@ async function getParameter(parameterName) {
         region: 'us-east-1'
     }
 
-    const ssm = isLocal ? new aws.SSM(
-        config
-    ) : new aws.SSM()
+    const ssm = new aws.SSM(config)
 
     return ssm
         .getParameter({
