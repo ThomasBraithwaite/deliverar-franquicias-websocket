@@ -3,7 +3,6 @@ const fs = require('fs')
 let datetime = new Date();
 
 async function processMessage(message) {
-    console.log(message)
     console.log(message.contenido)
     console.log(message.emisor)
 
