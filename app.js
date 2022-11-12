@@ -26,7 +26,7 @@ function connected(frame) {
         handler.processMessage(JSON.parse(user.body));
     });
 
-    stompClient.send('/topic/proveedor', undefined, JSON.stringify({hola: "hola"}))
+    stompClient.send('/app/proveedor', undefined, JSON.stringify({hola: "hola"}))
 }
 
 function disconnect() {
