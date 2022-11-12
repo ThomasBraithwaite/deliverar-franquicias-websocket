@@ -2,7 +2,7 @@ const StompJs = require('stompjs');
 const SockJS = require('sockjs-client');
 const handler = require('./handler');
 
-const socket = new SockJS('http://core.deliver.ar/websocket');
+const socket = new SockJS('http://core.deliver.ar/cliente');
 const stompClient = StompJs.over(socket);
 connect()
 
@@ -25,6 +25,8 @@ function connected(frame) {
     stompClient.subscribe('/topic/partners', function (user) {
         handler.processMessage(JSON.parse(user.body));
     });
+
+    stompClient.send('/topic/proveedor', undefined, JSON.stringify({hola: "hola"}))
 }
 
 function disconnect() {

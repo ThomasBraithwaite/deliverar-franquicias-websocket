@@ -1,7 +1,8 @@
 const helper = require("./helpers");
 
 async function processMessage(message) {
-    console.log(message);
+    console.log(JSON.parse(message.contenido))
+    console.log(message.emisor);
     await helper.connectMongo();
 
     //Actualizar db
