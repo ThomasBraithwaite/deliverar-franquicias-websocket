@@ -9,7 +9,7 @@ async function processMessage(message) {
 
     fs.appendFile('websocket.log', datetime + '\n' + 'Emisor: ' + message.emisor + '\nContenido:\n' + message.contenido + '\n#######################\n', function (err) {
         if (err) return console.log(err);
-        console.log('Log Saved!');
+        console.log('Log Saved!!');
      });
     await helper.connectMongo()
 
