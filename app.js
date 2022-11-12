@@ -19,8 +19,6 @@ function connected(frame) {
     stompClient.subscribe('/topic/franquicia', function (user) {
         handler.processMessage(JSON.parse(user.body));
     });
-
-    // stompClient.send('/app/franquicia', undefined, JSON.stringify({hola: "hola"}))
 }
 
 function disconnect() {

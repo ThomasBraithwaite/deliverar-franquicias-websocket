@@ -10,9 +10,9 @@ async function processMessage(message) {
         if (err) return console.log(err);
         console.log('Log Saved!!');
      });
-    await helper.connectMongo()
-
-    //Actualizar db
+     
+     //Actualizar db
+     // await helper.connectMongo()
     
 
     console.log("Request finalizado")
