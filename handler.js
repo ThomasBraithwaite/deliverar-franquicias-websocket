@@ -2,8 +2,8 @@ const helper = require("./helpers");
 const fs = require('fs')
 let datetime = new Date();
 const OrderProviderHistoryModel = require("./models/order_provider_history.model");
-const { ProveedorModel } = require("./models/proveedor.model");
 const OrderClientHistoryModel = require("./models/order_client_history.model");
+const { ProveedorModel } = require("./models/proveedor.model");
 
 async function processMessage(message) {
     console.log(message.contenido)
