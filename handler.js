@@ -9,7 +9,7 @@ async function processMessage(message) {
     console.log(message.contenido)
     console.log(message.emisor)
 
-    fs.appendFile('websocket-error.log', `${datetime}\nEmisor: ${message.emisor}\nContenido:\n${message.contenido}\n#######################\n`, function (err) {
+    fs.appendFile('websocket.log', `${datetime}\nEmisor: ${message.emisor}\nContenido:\n${message.contenido}\n#######################\n`, function (err) {
         if (err) return console.log(err);
         console.log('Log Saved!!');
     });
@@ -17,10 +17,10 @@ async function processMessage(message) {
     try {
 
         if(message.emisor === "proveedor") {
-            await procesarProveedor(message.contenido)
+            await procesarProveedor(JSON.parse(message.contenido))
         }
         else if(message.emisor === "cliente") {
-            await procesarCliente(message.contenido)
+            await procesarCliente(JSON.parse(message.contenido))
         }
     }
     catch(error) {
