@@ -16,11 +16,11 @@ async function processMessage(message) {
     
     try {
 
-        if(mensaje.emisor === "proveedor") {
-            await procesarProveedor(mensaje.contenido)
+        if(message.emisor === "proveedor") {
+            await procesarProveedor(message.contenido)
         }
-        else if(mensaje.emisor === "cliente") {
-            await procesarCliente(mensaje.contenido)
+        else if(message.emisor === "cliente") {
+            await procesarCliente(message.contenido)
         }
     }
     catch(error) {
@@ -33,17 +33,17 @@ async function processMessage(message) {
     console.log("Request finalizado")
 }
 
-async function procesarProveedor(mensaje) {
+async function procesarProveedor(message) {
     await helper.connectMongo()
-    if(mensaje?.tipo === "nuevo-pedido") {
-        await OrderProviderHistoryModel.findByIdAndUpdate(mensaje._id, { idPedido: mensaje.idPedido })
+    if(message?.tipo === "nuevo-pedido") {
+        await OrderProviderHistoryModel.findByIdAndUpdate(message._id, { idPedido: message.idPedido })
     }
-    else if(mensaje?.tipo === "actualizacion-pedido") {
-        await OrderProviderHistoryModel.findOneAndUpdate({idPedido: mensaje.idPedido}, { estado_orden: "FINALIZADO" })
+    else if(message?.tipo === "actualizacion-pedido") {
+        await OrderProviderHistoryModel.findOneAndUpdate({idPedido: message.idPedido}, { estado_orden: "FINALIZADO" })
     }
     else {
         await ProveedorModel.deleteMany({})
-        await ProveedorModel.collection.insertMany(mensaje.filter(x => x.CodProducto).map(x => {
+        await ProveedorModel.collection.insertMany(message.filter(x => x.CodProducto).map(x => {
             return {
                 Descripcion: x.Descripcion,
                 codigo_producto: x.CodProducto,
@@ -59,13 +59,13 @@ async function procesarProveedor(mensaje) {
     }
 }
 
-async function procesarCliente(mensaje) {
+async function procesarCliente(message) {
     await helper.connectMongo()
-    if(mensaje.tipo === "nuevo-pedido") {
+    if(message.tipo === "nuevo-pedido") {
         await OrderClientHistoryModel.insertMany([{
             estado_orden: "PENDIENTE",
-            comidas: mensaje.comidas,
-            direccion_destino : mensaje.direccion_destino
+            comidas: message.comidas,
+            direccion_destino : message.direccion_destino
         }])
     }
 }
