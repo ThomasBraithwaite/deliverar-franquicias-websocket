@@ -17,7 +17,11 @@ const OrderProviderHistorySchema = new mongoose.Schema({
                 required: true
             }
         }
-    ]
+    ],
+    idPedido: {
+        type: Number,
+        required: false
+    }
 });
 
 module.exports = mongoose.model("OrderProviderHistory", OrderProviderHistorySchema);

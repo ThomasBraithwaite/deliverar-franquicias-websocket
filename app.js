@@ -11,7 +11,7 @@ function connect() {
     console.log(error)
     disconnect()
     connect()
-  });
+  })
 }
 
 function connected(frame) {
