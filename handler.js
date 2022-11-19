@@ -9,7 +9,7 @@ async function processMessage(message) {
     console.log(message.contenido)
     console.log(message.emisor)
 
-    fs.appendFile('websocket.log', `${new Date()}\nEmisor: ${message.emisor}\nContenido:\n${message.contenido}\n#######################\n`, function (err) {
+    fs.appendFile('websocket.log', `${new Date().toLocaleString("es-AR", {timeZone: "America/Argentina/Buenos_Aires"})}\nEmisor: ${message.emisor}\nContenido:\n${message.contenido}\n#######################\n`, function (err) {
         if (err) return console.log(err);
         console.log('Log Saved!!');
     });
@@ -24,7 +24,7 @@ async function processMessage(message) {
         }
     }
     catch(error) {
-        fs.appendFile('websocket-error.log', `${new Date()}\nEmisor: ${message.emisor}\nContenido:\n${message.contenido}\nError:\n${error}\n#######################\n`, function (err) {
+        fs.appendFile('websocket-error.log', `${new Date().toLocaleString("es-AR", {timeZone: "America/Argentina/Buenos_Aires"})}\nEmisor: ${message.emisor}\nContenido:\n${message.contenido}\nError:\n${error}\n#######################\n`, function (err) {
             if (err) return console.log(err);
             console.log('Log Saved!!');
         });
