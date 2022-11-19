@@ -61,7 +61,6 @@ async function procesarProveedor(message) {
 async function procesarCliente(message) {
     await helper.connectMongo()
     if(message.tipo === "nuevo-pedido") {
-        const franquicia = await FranchiseModel.findOne();
         await OrderClientHistoryModel.insertMany([{
             estado_orden: "PENDIENTE",
             comidas: message.comidas,
