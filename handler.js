@@ -1,6 +1,5 @@
 const helper = require("./helpers");
 const fs = require('fs')
-let datetime = new Date();
 const OrderProviderHistoryModel = require("./models/order_provider_history.model");
 const OrderClientHistoryModel = require("./models/order_client_history.model");
 const { ProveedorModel } = require("./models/proveedor.model");
@@ -9,7 +8,7 @@ async function processMessage(message) {
     console.log(message.contenido)
     console.log(message.emisor)
 
-    fs.appendFile('websocket.log', `${datetime}\nEmisor: ${message.emisor}\nContenido:\n${message.contenido}\n#######################\n`, function (err) {
+    fs.appendFile('websocket.log', `${new Date()}\nEmisor: ${message.emisor}\nContenido:\n${message.contenido}\n#######################\n`, function (err) {
         if (err) return console.log(err);
         console.log('Log Saved!!');
     });
@@ -24,7 +23,7 @@ async function processMessage(message) {
         }
     }
     catch(error) {
-        fs.appendFile('websocket-error.log', `${datetime}\nEmisor: ${message.emisor}\nContenido:\n${message.contenido}\nError:\n${error}\n#######################\n`, function (err) {
+        fs.appendFile('websocket-error.log', `${new Date()}\nEmisor: ${message.emisor}\nContenido:\n${message.contenido}\nError:\n${error}\n#######################\n`, function (err) {
             if (err) return console.log(err);
             console.log('Log Saved!!');
         });
