@@ -3,6 +3,7 @@ const fs = require('fs')
 const OrderProviderHistoryModel = require("./models/order_provider_history.model");
 const OrderClientHistoryModel = require("./models/order_client_history.model");
 const { ProveedorModel } = require("./models/proveedor.model");
+const FranchiseModel = require("./models/franchise.model");
 
 async function processMessage(message) {
     console.log(message.contenido)
@@ -61,10 +62,13 @@ async function procesarProveedor(message) {
 async function procesarCliente(message) {
     await helper.connectMongo()
     if(message.tipo === "nuevo-pedido") {
+        const franquicia = await FranchiseModel.findOne();
         await OrderClientHistoryModel.insertMany([{
             estado_orden: "PENDIENTE",
             comidas: message.comidas,
-            direccion_destino : message.direccion_destino
+            direccion_destino : message.direccion_destino,
+            foto_url: franquicia.foto_url,
+            cuit: franquicia.cuit
         }])
     }
 }
