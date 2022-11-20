@@ -3,6 +3,7 @@ const fs = require('fs')
 const OrderProviderHistoryModel = require("./models/order_provider_history.model");
 const OrderClientHistoryModel = require("./models/order_client_history.model");
 const { ProveedorModel } = require("./models/proveedor.model");
+const { ProductModel } = require("./models/product.model");
 
 async function processMessage(message) {
     console.log(message.contenido)
@@ -39,6 +40,15 @@ async function procesarProveedor(message) {
     }
     else if(message?.tipo === "actualizacion-pedido") {
         await OrderProviderHistoryModel.findOneAndUpdate({idPedido: message.idPedido}, { estado_orden: "FINALIZADO" })
+
+        const orderSent = await OrderProviderHistoryModel.findById({ 
+            idPedido: message.idPedido
+        });
+        orderSent.productos.map(async (product) => {
+            await ProductModel.findOneAndUpdate({codigo_producto: product.codigo_producto}, {$inc: { "cantidad": product.cantidad }});
+        });
+
+
     }
     else {
         await ProveedorModel.deleteMany({})
