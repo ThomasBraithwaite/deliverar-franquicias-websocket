@@ -44,11 +44,17 @@ async function procesarProveedor(message) {
         const orderSent = await OrderProviderHistoryModel.findById({ 
             idPedido: message.idPedido
         });
-        orderSent.productos.map(async (product) => {
-            await ProductModel.findOneAndUpdate({codigo_producto: product.codigo_producto}, {$inc: { "cantidad": product.cantidad }});
-        });
-
-
+        await Promise.all(orderSent.productos.map(async (product) => {
+            await ProductModel.findOneAndUpdate({codigo_producto: product.codigo_producto},
+                {
+                    ...product,
+                    cantidad: { $inc: product.cantidad }
+                },
+                {
+                    upsert: true
+                }
+            );
+        }))
     }
     else {
         await ProveedorModel.deleteMany({})
