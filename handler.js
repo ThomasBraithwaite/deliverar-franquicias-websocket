@@ -76,11 +76,16 @@ async function procesarProveedor(message) {
 
 async function procesarCliente(message) {
     await helper.connectMongo()
-    if(message.tipo === "nuevo-pedido") {
+    if(message.tipo === "orden") {
         await OrderClientHistoryModel.insertMany([{
             estado_orden: "PENDIENTE",
-            comidas: message.comidas,
-            direccion_destino : message.direccion_destino
+            comidas: message.meals.map(x => {
+                return {
+                    comida: x.meal,
+                    cantidad: x.quantity
+                }
+            }),
+            direccion_destino : message.client_address
         }])
     }
 }
