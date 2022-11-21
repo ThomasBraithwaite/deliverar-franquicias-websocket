@@ -85,7 +85,8 @@ async function procesarCliente(message) {
                     cantidad: x.quantity
                 }
             }),
-            direccion_destino : message.client_address
+            direccion_destino : message.client_address,
+            order_id: message.order_id
         }])
     }
 }

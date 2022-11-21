@@ -21,7 +21,11 @@ const OrderClientHistorySchema = new mongoose.Schema({
                 required: true
             }
         }
-    ]
+    ],
+    order_id: {
+        type: Number,
+        required: true
+    }
 });
 
 module.exports = mongoose.model("ClientOrderHistory", OrderClientHistorySchema);
