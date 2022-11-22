@@ -41,7 +41,7 @@ async function procesarProveedor(message) {
     else if(message?.tipo === "actualizacion-pedido") {
         await OrderProviderHistoryModel.findOneAndUpdate({idPedido: message.idPedido}, { estado_orden: "FINALIZADO" })
 
-        const orderSent = await OrderProviderHistoryModel.findById({ 
+        const orderSent = await OrderProviderHistoryModel.findOne({ 
             idPedido: message.idPedido
         });
         await Promise.all(orderSent.productos.map(async (product) => {
