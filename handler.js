@@ -36,7 +36,8 @@ async function processMessage(message) {
 async function procesarProveedor(message) {
     await helper.connectMongo()
     if(message?.tipo === "nuevo-pedido") {
-        await OrderProviderHistoryModel.findByIdAndUpdate(message._id, { idPedido: message.idPedido })
+        const idPedidoResponse = await OrderProviderHistoryModel.findByIdAndUpdate(message._id, { idPedido: message.idPedido })
+        console.log(idPedidoResponse)
     }
     else if(message?.tipo === "actualizacion-pedido") {
         await OrderProviderHistoryModel.findOneAndUpdate({idPedido: message.idPedido}, { estado_orden: "FINALIZADO" })
