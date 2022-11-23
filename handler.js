@@ -7,7 +7,6 @@ const { ProductModel } = require("./models/product.model");
 const FranquiciaModel = require("./models/franchise.model");
 const axios = require("axios");
 
-
 async function processMessage(message) {
     console.log(message.contenido)
     console.log(message.emisor)
@@ -82,10 +81,8 @@ async function procesarCliente(message) {
     await helper.connectMongo()
     if(message.tipo === "orden") {
         
-        const local = await hayComidas(message.mensaje.meals);
-
-        console.log("Local: ", local);
-        if (local) {
+        const hayComida = await hayComidas(message.mensaje.meals);
+        if (hayComida) {
             await OrderClientHistoryModel.insertMany([{
                 estado_orden: "PENDIENTE",
                 comidas: message.mensaje.meals.map(x => {
@@ -150,7 +147,6 @@ async function hayComidas(comidas) {
             /* Sino existe el producto en el diccionario lo trae de la DB y agrega el stock */
             if (!(productos[j].codigo_producto in stock_productos)) {
                 producto = await ProductModel.findOne({ codigo_producto:    productos[j].codigo_producto });
-                console.log("Producto: ", producto);
                 stock_actual = producto.cantidad;
                 stock_productos[productos[j].codigo_producto] = stock_actual;
             }
