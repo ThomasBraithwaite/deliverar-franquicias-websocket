@@ -52,7 +52,7 @@ async function connectMongo(){
 function getMongoUrl(response) {
     const [url_1, url_2] = response.Parameter?.Value.split("?");
   
-    return isLocal ? url_1+"?"+url_2 : url_1+"franquicia_db?"+url_2;
+    return false ? url_1+"?"+url_2 : url_1+"franquicia_db?"+url_2;
 }
 
 module.exports = {
