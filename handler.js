@@ -133,6 +133,7 @@ async function hayComidas(comidas) {
     // Diccionario para llevar la cuenta del stock para cada comida
     let stock_productos = {};
     let falta_stock = false;
+    console.log("Comidas: ", comidas);
     
     // Recorre las comidas pedidas
     for (let i=0; i<comidas.length && !falta_stock; i++) {
@@ -145,6 +146,7 @@ async function hayComidas(comidas) {
             /* Sino existe el producto en el diccionario lo trae de la DB y agrega el stock */
             if (!(productos[j].codigo_producto in stock_productos)) {
                 producto = await ProductModel.findOne({ codigo_producto:    productos[j].codigo_producto });
+                console.log("Producto: ", producto);
                 stock_actual = producto.cantidad;
                 stock_productos[productos[j].codigo_producto] = stock_actual;
             }
