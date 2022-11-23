@@ -91,6 +91,7 @@ async function procesarCliente(message) {
         
         const hayComida = await hayComidas(message.mensaje.meals);
         if (hayComida) {
+            // Guardar pedido en nuestra DB
             await OrderClientHistoryModel.insertMany([{
                 estado_orden: "PENDIENTE",
                 comidas: message.mensaje.meals.map(x => {
@@ -103,6 +104,17 @@ async function procesarCliente(message) {
                 direccion_destino : message.mensaje.client_address,
                 order_id: message.mensaje.order_id
             }]);
+            
+            // Reducir stock para 'reservar' el pedido
+            message.mensaje.meals.map(async (meal) => {
+                const { cantidad, ...comida } = meal;
+                const stock_a_reservar = cantidad;
+                
+                comida.productos.map(async (producto) => {
+                    await ProductModel.findOneAndUpdate({ codigo_producto: producto.codigo_producto },
+                    { $inc: { cantidad: -stock_a_reservar }});
+                });                
+            });
         } else {
             const franquicia = await FranquiciaModel.findOne({cuit: "30-71446892-4"});
             // Enviar al cliente la orden rechazada
