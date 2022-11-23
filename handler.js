@@ -4,7 +4,8 @@ const OrderProviderHistoryModel = require("./models/order_provider_history.model
 const OrderClientHistoryModel = require("./models/order_client_history.model");
 const { ProveedorModel } = require("./models/proveedor.model");
 const { ProductModel } = require("./models/product.model");
-const FranquiciaModel = require("./models/meal.model");
+const FranquiciaModel = require("./models/franchise.model");
+const axios = require("axios");
 
 async function processMessage(message) {
     console.log(message.contenido)
@@ -88,28 +89,29 @@ async function procesarCliente(message) {
     await helper.connectMongo()
     if(message.tipo === "orden") {
         
-        if (hayComidas(message.meals)) {
+        const hayComida = await hayComidas(message.mensaje.meals);
+        if (hayComida) {
             await OrderClientHistoryModel.insertMany([{
                 estado_orden: "PENDIENTE",
-                comidas: message.meals.map(x => {
-                    const { quantity, ...meal } = x
+                comidas: message.mensaje.meals.map(x => {
+                    const { cantidad, ...meal } = x
                     return {
                         comida: meal,
-                        cantidad: quantity
+                        cantidad: cantidad
                     }
                 }),
-                direccion_destino : message.client_address,
-                order_id: message.order_id
+                direccion_destino : message.mensaje.client_address,
+                order_id: message.mensaje.order_id
             }]);
         } else {
-            const franquicia = await FranquiciaModel.findOne({});
+            const franquicia = await FranquiciaModel.findOne({cuit: "30-71446892-4"});
             // Enviar al cliente la orden rechazada
             await axios.post('http://core.deliver.ar/publicarMensaje?canal=franquicia', {
                 mensaje: { 
-                    order_id: message.order_id, 
+                    order_id: message.mensaje.order_id, 
                     order_status: "RECHAZADO",
                     franchise_address: franquicia.direccion,
-                    client_address: message.client_address
+                    client_address: message.mensaje.client_address
                 },
                 tipo: 'actualizacion-pedido'
             },
@@ -122,15 +124,15 @@ async function procesarCliente(message) {
             // Guardar en nuestra DB la orden rechazada
             await OrderClientHistoryModel.insertMany([{
                 estado_orden: "RECHAZADO",
-                comidas: message.meals.map(x => {
-                    const { quantity, ...meal } = x
+                comidas: message.mensaje.meals.map(x => {
+                    const { cantidad, ...meal } = x
                     return {
                         comida: meal,
-                        cantidad: quantity
+                        cantidad: cantidad
                     }
                 }),
-                direccion_destino : message.client_address,
-                order_id: message.order_id
+                direccion_destino : message.mensaje.client_address,
+                order_id: message.mensaje.order_id
             }]);
         }
     }
@@ -152,13 +154,14 @@ async function hayComidas(comidas) {
 
             /* Sino existe el producto en el diccionario lo trae de la DB y agrega el stock */
             if (!(productos[j].codigo_producto in stock_productos)) {
-                stock_actual = await ProductModel.findOne({ codigo_producto:    productos[j].codigo_producto });
+                producto = await ProductModel.findOne({ codigo_producto:    productos[j].codigo_producto });
+                stock_actual = producto.cantidad;
                 stock_productos[productos[j].codigo_producto] = stock_actual;
             }
 
             if (stock_productos[productos[j].codigo_producto] >= 
-                    comidas[i].quantity) {
-                stock_productos[productos[j].codigo_producto] -= comidas[i].quantity;
+                    comidas[i].cantidad) {
+                stock_productos[productos[j].codigo_producto] -= comidas[i].cantidad;
             } else {
                 falta_stock = true;
             }
