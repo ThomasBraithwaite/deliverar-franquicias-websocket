@@ -80,7 +80,8 @@ async function procesarCliente(message) {
     await helper.connectMongo()
     if(message.tipo === "orden") {
         
-        const local = hayComidas(message.mensaje.meals)
+        let local
+        hayComidas(message.mensaje.meals).then(value => local = value);
         console.log("Local: ", local);
         if (local) {
             await OrderClientHistoryModel.insertMany([{
