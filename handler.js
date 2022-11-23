@@ -4,6 +4,7 @@ const OrderProviderHistoryModel = require("./models/order_provider_history.model
 const OrderClientHistoryModel = require("./models/order_client_history.model");
 const { ProveedorModel } = require("./models/proveedor.model");
 const { ProductModel } = require("./models/product.model");
+const FranquiciaModel = require("./models/meal.model");
 
 async function processMessage(message) {
     console.log(message.contenido)
@@ -78,19 +79,84 @@ async function procesarProveedor(message) {
 async function procesarCliente(message) {
     await helper.connectMongo()
     if(message.tipo === "orden") {
-        await OrderClientHistoryModel.insertMany([{
-            estado_orden: "PENDIENTE",
-            comidas: message.meals.map(x => {
-                const { quantity, ...meal } = x
-                return {
-                    comida: meal,
-                    cantidad: quantity
-                }
-            }),
-            direccion_destino : message.client_address,
-            order_id: message.order_id
-        }])
+        
+        if (hayComidas(message.meals)) {
+            await OrderClientHistoryModel.insertMany([{
+                estado_orden: "PENDIENTE",
+                comidas: message.meals.map(x => {
+                    const { quantity, ...meal } = x
+                    return {
+                        comida: meal,
+                        cantidad: quantity
+                    }
+                }),
+                direccion_destino : message.client_address,
+                order_id: message.order_id
+            }]);
+        } else {
+            const franquicia = await FranquiciaModel.findOne({});
+            // Enviar al cliente la orden rechazada
+            await axios.post('http://core.deliver.ar/publicarMensaje?canal=franquicia', {
+                mensaje: { 
+                    order_id: message.order_id, 
+                    order_status: "RECHAZADO",
+                    franchise_address: franquicia.direccion,
+                    client_address: message.client_address
+                },
+                tipo: 'actualizacion-pedido'
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            // Guardar en nuestra DB la orden rechazada
+            await OrderClientHistoryModel.insertMany([{
+                estado_orden: "RECHAZADO",
+                comidas: message.meals.map(x => {
+                    const { quantity, ...meal } = x
+                    return {
+                        comida: meal,
+                        cantidad: quantity
+                    }
+                }),
+                direccion_destino : message.client_address,
+                order_id: message.order_id
+            }]);
+        }
     }
+}
+
+// Si hay productos para hacer la comida devuelve 'true', sino 'false'
+async function hayComidas(comidas) {
+    // Diccionario para llevar la cuenta del stock para cada comida
+    let stock_productos = {};
+    let falta_stock = false;
+    
+    // Recorre las comidas pedidas
+    for (let i=0; i<comidas.length && !falta_stock; i++) {
+        const productos = comidas[i].productos;
+
+        // Recorre los productos de cada comida 
+        for (let j=0; j<productos.length && !falta_stock; j++) {
+            let stock_actual = 0;
+
+            /* Sino existe el producto en el diccionario lo trae de la DB y agrega el stock */
+            if (!(productos[j].codigo_producto in stock_productos)) {
+                stock_actual = await ProductModel.findOne({ codigo_producto:    productos[j].codigo_producto });
+                stock_productos[productos[j].codigo_producto] = stock_actual;
+            }
+
+            if (stock_productos[productos[j].codigo_producto] >= 
+                    comidas[i].quantity) {
+                stock_productos[productos[j].codigo_producto] -= comidas[i].quantity;
+            } else {
+                falta_stock = true;
+            }
+        }
+    }
+    return !falta_stock;
 }
 
 module.exports = {
