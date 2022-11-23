@@ -80,28 +80,28 @@ async function procesarCliente(message) {
     await helper.connectMongo()
     if(message.tipo === "orden") {
         
-        if (hayComidas(message.meals)) {
+        if (hayComidas(message.mensaje.meals)) {
             await OrderClientHistoryModel.insertMany([{
                 estado_orden: "PENDIENTE",
-                comidas: message.meals.map(x => {
+                comidas: message.mensaje.meals.map(x => {
                     const { quantity, ...meal } = x
                     return {
                         comida: meal,
                         cantidad: quantity
                     }
                 }),
-                direccion_destino : message.client_address,
-                order_id: message.order_id
+                direccion_destino : message.mensaje.client_address,
+                order_id: message.mensaje.order_id
             }]);
         } else {
             const franquicia = await FranquiciaModel.findOne({});
             // Enviar al cliente la orden rechazada
             await axios.post('http://core.deliver.ar/publicarMensaje?canal=franquicia', {
                 mensaje: { 
-                    order_id: message.order_id, 
+                    order_id: message.mensaje.order_id, 
                     order_status: "RECHAZADO",
                     franchise_address: franquicia.direccion,
-                    client_address: message.client_address
+                    client_address: message.mensaje.client_address
                 },
                 tipo: 'actualizacion-pedido'
             },
@@ -114,15 +114,15 @@ async function procesarCliente(message) {
             // Guardar en nuestra DB la orden rechazada
             await OrderClientHistoryModel.insertMany([{
                 estado_orden: "RECHAZADO",
-                comidas: message.meals.map(x => {
+                comidas: message.mensaje.meals.map(x => {
                     const { quantity, ...meal } = x
                     return {
                         comida: meal,
                         cantidad: quantity
                     }
                 }),
-                direccion_destino : message.client_address,
-                order_id: message.order_id
+                direccion_destino : message.mensaje.client_address,
+                order_id: message.mensaje.order_id
             }]);
         }
     }
