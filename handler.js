@@ -80,7 +80,9 @@ async function procesarCliente(message) {
     await helper.connectMongo()
     if(message.tipo === "orden") {
         
-        if (hayComidas(message.mensaje.meals)) {
+        const local = hayComidas(message.mensaje.meals)
+        console.log("Local: ", local);
+        if (local) {
             await OrderClientHistoryModel.insertMany([{
                 estado_orden: "PENDIENTE",
                 comidas: message.mensaje.meals.map(x => {
@@ -133,7 +135,6 @@ async function hayComidas(comidas) {
     // Diccionario para llevar la cuenta del stock para cada comida
     let stock_productos = {};
     let falta_stock = false;
-    console.log("Comidas: ", comidas);
     
     // Recorre las comidas pedidas
     for (let i=0; i<comidas.length && !falta_stock; i++) {
