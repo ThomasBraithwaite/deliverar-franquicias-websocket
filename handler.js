@@ -7,6 +7,7 @@ const { ProductModel } = require("./models/product.model");
 const FranquiciaModel = require("./models/franchise.model");
 const axios = require("axios");
 
+
 async function processMessage(message) {
     console.log(message.contenido)
     console.log(message.emisor)
