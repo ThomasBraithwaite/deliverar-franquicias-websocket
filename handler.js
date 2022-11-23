@@ -144,13 +144,14 @@ async function hayComidas(comidas) {
 
             /* Sino existe el producto en el diccionario lo trae de la DB y agrega el stock */
             if (!(productos[j].codigo_producto in stock_productos)) {
-                stock_actual = await ProductModel.findOne({ codigo_producto:    productos[j].codigo_producto });
+                producto = await ProductModel.findOne({ codigo_producto:    productos[j].codigo_producto });
+                stock_actual = producto.cantidad;
                 stock_productos[productos[j].codigo_producto] = stock_actual;
             }
 
             if (stock_productos[productos[j].codigo_producto] >= 
-                    comidas[i].quantity) {
-                stock_productos[productos[j].codigo_producto] -= comidas[i].quantity;
+                    comidas[i].cantidad) {
+                stock_productos[productos[j].codigo_producto] -= comidas[i].cantidad;
             } else {
                 falta_stock = true;
             }
