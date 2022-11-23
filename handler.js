@@ -84,10 +84,10 @@ async function procesarCliente(message) {
             await OrderClientHistoryModel.insertMany([{
                 estado_orden: "PENDIENTE",
                 comidas: message.mensaje.meals.map(x => {
-                    const { quantity, ...meal } = x
+                    const { cantidad, ...meal } = x
                     return {
                         comida: meal,
-                        cantidad: quantity
+                        cantidad: cantidad
                     }
                 }),
                 direccion_destino : message.mensaje.client_address,
@@ -115,10 +115,10 @@ async function procesarCliente(message) {
             await OrderClientHistoryModel.insertMany([{
                 estado_orden: "RECHAZADO",
                 comidas: message.mensaje.meals.map(x => {
-                    const { quantity, ...meal } = x
+                    const { cantidad, ...meal } = x
                     return {
                         comida: meal,
-                        cantidad: quantity
+                        cantidad: cantidad
                     }
                 }),
                 direccion_destino : message.mensaje.client_address,
