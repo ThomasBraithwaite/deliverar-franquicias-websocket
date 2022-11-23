@@ -5,6 +5,7 @@ const OrderClientHistoryModel = require("./models/order_client_history.model");
 const { ProveedorModel } = require("./models/proveedor.model");
 const { ProductModel } = require("./models/product.model");
 const FranquiciaModel = require("./models/franchise.model");
+const MealModel = require("./models/meal.model");
 const axios = require("axios");
 
 async function processMessage(message) {
@@ -65,7 +66,10 @@ async function procesarProveedor(message) {
                     upsert: true
                 }
             );
-        }))
+        }));
+        
+        // Publicamos las comidas con stock actualizado
+        await publishMeals();
     }
     else {
         await ProveedorModel.deleteMany({})
@@ -115,6 +119,9 @@ async function procesarCliente(message) {
                     { $inc: { cantidad: -stock_a_reservar }});
                 });                
             });
+
+            // Publicamos las comidas con stock actualizado
+            await publishMeals();
         } else {
             const franquicia = await FranquiciaModel.findOne({cuit: "30-71446892-4"});
             // Enviar al cliente la orden rechazada
@@ -180,6 +187,28 @@ async function hayComidas(comidas) {
         }
     }
     return !falta_stock;
+}
+
+exports.publishMeals = async () => {
+    try{
+        const meals = await MealModel.find({});
+        const franquicia = await FranchiseSchema.findOne({});
+        await axios.post('http://core.deliver.ar/publicarMensaje?canal=franquicia', {
+            mensaje: { 
+                meals,
+                franquicia
+            },
+            tipo: 'listado'
+        },
+        {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+    }
+    catch (e) {
+        throw Error("Error while publishing meals");
+    }
 }
 
 module.exports = {
