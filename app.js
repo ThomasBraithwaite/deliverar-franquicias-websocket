@@ -17,8 +17,7 @@ function connect() {
 function connected(frame) {
     console.log('Connected: ' + frame);
     stompClient.subscribe('/topic/franquicia', function (user) {
-        console.log(JSON.parse(user.body))
-        // handler.processMessage(JSON.parse(user.body));
+      handler.processMessage(JSON.parse(user.body));
     });
     stompClient.send("/app/franquicia");
 }
