@@ -97,7 +97,7 @@ async function procesarCliente(message) {
                 order_id: message.mensaje.order_id
             }]);
         } else {
-            const franquicia = await FranquiciaModel.findOne({});
+            const franquicia = await FranquiciaModel.findOne({cuit: "30-71446892-4"});
             // Enviar al cliente la orden rechazada
             await axios.post('http://core.deliver.ar/publicarMensaje?canal=franquicia', {
                 mensaje: { 
