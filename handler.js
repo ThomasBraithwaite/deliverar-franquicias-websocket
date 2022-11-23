@@ -16,7 +16,6 @@ async function processMessage(message) {
     });
     
     try {
-
         if(message.emisor === "proveedor") {
             await procesarProveedor(JSON.parse(message.contenido))
         }
@@ -47,10 +46,11 @@ async function procesarProveedor(message) {
             idPedido: message.idPedido
         });
         await Promise.all(orderSent.productos.map(async (product) => {
-            await ProductModel.findOneAndUpdate({codigo_producto: product.codigo_producto},
+            const { _id, ...propsProduct } = product 
+            await ProductModel.findOneAndUpdate({codigo_producto: propsProduct.codigo_producto},
                 {
-                    ...product,
-                    cantidad: { $inc: product.cantidad }
+                    ...propsProduct,
+                    cantidad: { $inc: propsProduct.cantidad }
                 },
                 {
                     upsert: true
