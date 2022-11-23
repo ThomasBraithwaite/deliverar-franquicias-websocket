@@ -81,7 +81,7 @@ async function procesarCliente(message) {
     if(message.tipo === "orden") {
         
         let local
-        hayComidas(message.mensaje.meals).then(value => local = value);
+        hayComidas(message.mensaje.meals).then(value => console.log(value));
         console.log("Local: ", local);
         if (local) {
             await OrderClientHistoryModel.insertMany([{
