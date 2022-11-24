@@ -5,7 +5,7 @@ const OrderClientHistoryModel = require("./models/order_client_history.model");
 const { ProveedorModel } = require("./models/proveedor.model");
 const { ProductModel } = require("./models/product.model");
 const FranquiciaModel = require("./models/franchise.model");
-const MealModel = require("./models/meal.model");
+const { MealModel } = require("./models/meal.model");
 const axios = require("axios");
 
 async function processMessage(message) {
