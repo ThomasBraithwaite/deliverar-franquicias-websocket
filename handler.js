@@ -123,10 +123,10 @@ async function procesarCliente(message) {
                 const { cantidad, ...comida } = meal;
                 const stock_a_reservar = cantidad;
                 
-                comida.productos.map(async (producto) => {
+                await Promise.all(comida.productos.map(async (producto) => {
                     await ProductModel.findOneAndUpdate({ codigo_producto: producto.codigo_producto },
                     { $inc: { cantidad: -stock_a_reservar }});
-                });                
+                }))                
             });
 
             // Publicamos las comidas con stock actualizado
@@ -216,7 +216,7 @@ async function publishMeals() {
         })
     }
     catch (e) {
-        throw Error("Error while publishing meals");
+        throw Error(`Error while publishing meals: ${e}`);
     }
 }
 
