@@ -101,7 +101,16 @@ async function procesarCliente(message) {
                 comidas: message.mensaje.meals.map(x => {
                     const { cantidad, ...meal } = x
                     return {
-                        comida: meal,
+                        comida: {
+                            ...meal,
+                            _id: meal._id.$oid,
+                            productos: meal.productos.map(p => {
+                                return {
+                                    ...p,
+                                    _id: p._id.$oid
+                                }
+                            })
+                        },
                         cantidad: cantidad
                     }
                 }),
