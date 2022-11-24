@@ -198,10 +198,10 @@ async function hayComidas(comidas) {
     return !falta_stock;
 }
 
-exports.publishMeals = async () => {
+async function publishMeals() {
     try{
         const meals = await MealModel.find({});
-        const franquicia = await FranchiseSchema.findOne({});
+        const franquicia = await FranquiciaModel.findOne({});
         await axios.post('http://core.deliver.ar/publicarMensaje?canal=franquicia', {
             mensaje: { 
                 meals,
